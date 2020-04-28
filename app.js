@@ -15,8 +15,7 @@ const app = express();
 
 
 app.use(express.json());
-app.use('/api', courses);
-app.use('/api', users);
+
 
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
@@ -42,7 +41,8 @@ const sequelize = new Sequelize({
 
 
 // TODO setup your api routes here
-
+app.use('/api', courses);
+app.use('/api', users);
 // setup a friendly greeting for the root route
 app.get('/', (req, res) => {
   res.json({

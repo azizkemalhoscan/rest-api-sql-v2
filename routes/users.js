@@ -1,5 +1,8 @@
 var express = require('express');
 var router = express.Router();
+const users = require('../seed/data.json').users;
+
+
 
 /* GET users listing. */
 router.get('/users', (req, res) => {
@@ -10,8 +13,10 @@ router.get('/users', (req, res) => {
 to "/", and returns no content  res.redirect may be the wrong soluttion*/
 
 router.post('/users', (req, res) => {
+  const user = req.body;
+  users.push(user)
   res.status(201).end();
-  res.redirect('/');
+  // res.redirect('/');
 })
 
 

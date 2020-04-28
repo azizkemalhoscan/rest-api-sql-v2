@@ -41,7 +41,7 @@ DONT FORGET TO COMPLETE THIS STEPS
 
 1 If Sequelize throws an error related to a mismatch between the model and the associated table, the error message should tell you the cause of the problem.
 2 Users get and post routes impelementedet WITH OME PROBLEMs
-
+3 I think my foreign key is not working properly.
 
 
 --------------------------------------------------
@@ -86,4 +86,6 @@ Using  [Model].Associate = (models) => {}
 16 is to add '/api' prefix to courses routes and 17 is the same for users
 
 13- Users get and post routes impelementedet WITH OME PROBLEMs
+
+14- Courses routes ....
 
