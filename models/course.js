@@ -7,8 +7,8 @@ module.exports = (sequelize) => {
   Course.init({
     id: {
       type: Sequelize.INTEGER,
-      primaryKey: true,
       autoIncrement: true,
+      primaryKey: true
     },
     description: {
       type: Sequelize.TEXT
@@ -32,7 +32,7 @@ module.exports = (sequelize) => {
  };
 
   return Course;
-}
+};
 
 // Example From starter files
 
