@@ -7,11 +7,14 @@ module.exports = (sequelize) => {
   Course.init({
     id: {
       type: Sequelize.INTEGER,
+      primaryKey: true,
       autoIncrement: true,
-      primaryKey: true
+    },
+    title: {
+      type: Sequelize.STRING
     },
     description: {
-      type: Sequelize.TEXT
+      type: Sequelize.STRING
     },
     estimatedTime: {
       type: Sequelize.STRING,
@@ -27,12 +30,13 @@ module.exports = (sequelize) => {
   Course.hasMany(models.User, {
     foreignKey: {
       fieldName: "userId",
+      allowNull: false,
     },
   });
  };
 
   return Course;
-};
+}
 
 // Example From starter files
 
