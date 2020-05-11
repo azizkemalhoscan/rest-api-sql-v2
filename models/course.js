@@ -5,11 +5,11 @@ const Sequelize = require('sequelize');
 module.exports = (sequelize) => {
   class Course extends Sequelize.Model{}
   Course.init({
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
+    // id: {
+    //   type: Sequelize.INTEGER,
+    //   primaryKey: true,
+    //   autoIncrement: true,
+    // },
     title: {
       type: Sequelize.STRING
     },
@@ -26,11 +26,11 @@ module.exports = (sequelize) => {
     },
   }, { sequelize });
 
- Course.Associate = (models) => {
+ Course.associate = (models) => {
   Course.hasMany(models.User, {
     foreignKey: {
       fieldName: "userId",
-      allowNull: false,
+      // allowNull: false
     },
   });
  };

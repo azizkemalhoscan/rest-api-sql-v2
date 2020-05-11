@@ -65,7 +65,7 @@ STEPS THAT ARE FOLLOWED WHEN SOLVING THIS PROJECT
 6- bin/www file we imported models and sequelize firts then chained them as a promise to
 sync the app everytime the app refreshes.
 
-7- In config.json file commented out generated configs and added only storage and dialect
+7- In config.json file commented out generated configs and added only storage and dialect ?????????????????????????????
 
 8- Testing the connection with DB
 

@@ -1,8 +1,24 @@
 var express = require('express');
 var router = express.Router();
+const { check, validationResult } = require('express-validator');
 // ES6 SYNTAX
-const { Course } = require('../models');
+const Course  = require('../models').Course;
+const auth = require('basic-auth');
 let courses;
+
+const validateTitle= check("title")
+.exists({
+  checkNull: true,
+  checkFalsy: true
+})
+.withMessage('Please provide a vaue for "Title"');
+
+const validateDescription = check("description")
+.exists({
+  checkNull: true,
+  checkFalsy: true
+})
+.withMessage('Please provide a vaue for "Description"');
 
 // Handler function to wrap each route
 
@@ -14,6 +30,24 @@ function asyncHandler(cb){
       next(error);
     }
   }
+}
+
+// Authentication middleware
+// YOU NEDD TO MAKE SOME CHANGES HERE.
+
+const authenticateUser = (req, res, next) => {
+  const credentials = auth(req);
+  if(credentials){
+    const user = users.find(u => u.username === credentials.name);
+    if(user){
+      const authenticated = bcryptjs
+      .compareSync( credentials.pass, user.password);
+      if(authenticated){
+        req.currentUser = user;
+      }
+    }
+  }
+  next();
 }
 
 // Get all copurses data in the format of json // WORKS!
@@ -30,16 +64,19 @@ router.get('/courses/:id', asyncHandler( async(req, res) => {
   res.json(course);
 }));
 
-// Create Courses
+// Create Courses // PROBLEMSSS
 
-router.post('/courses', asyncHandler(async(req, res) => {
-  const course = await Course.create(req.body
-    // title: req.body.title,
-    // description: req.body.description,
-    // estimatedTime: req.body.estimatedTime,
-    // materialsNeeded: req.body.materialsNeeded
-  );
-  courses.push(course);
+router.post('/courses',[validateTitle, validateDescription], asyncHandler(async(req, res) => {
+
+  const course = await Course.create(req.body);
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    const errormessages = errors.array().map(error => error.msg);
+    res.status(400).json({ errors: errormessages })
+  } else {
+    courses.push(course);
+    res.status(201).json(courses).end();
+  }
 }));
 
 // Update Courses  // WORKS!
