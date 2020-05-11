@@ -42,9 +42,9 @@ DONT FORGET TO COMPLETE
 1 If Sequelize throws an error related to a mismatch between the model and the associated table, the error message should tell you the cause of the problem.
 2 Users get and post routes impelementedet WITH OME PROBLEMs
 3 I think my foreign key is not working properly.
-4 Unintentionally importeed seed file to routes rather than importing models.
+
 5 Express middleware --- where are you going to implement it
-6 I have manually added (FLAT DATA FILE) id's to the seed file to keep going
+
 7 Get currently authenticated user ?? Do not get it!
 8 Create Courses route is problematic, Issue is SQL foreign key constrained.
 9 There could also be a problem in models definition of foreign key for number 8.

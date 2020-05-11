@@ -76,8 +76,8 @@ router.get('/courses/:id', asyncHandler( async(req, res) => {
 }));
 
 // Create Courses // PROBLEMSSS
-
-router.post('/courses',[validateTitle, validateDescription], authenticateUser, asyncHandler(async(req, res) => {
+// AUTHENTICATEUSER Will be added later.
+router.post('/courses',[validateTitle, validateDescription], asyncHandler(async(req, res) => {
 
   const course = await Course.create(req.body);
   const errors = validationResult(req);
