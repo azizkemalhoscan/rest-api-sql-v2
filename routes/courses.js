@@ -44,10 +44,21 @@ const authenticateUser = (req, res, next) => {
       .compareSync( credentials.pass, user.password);
       if(authenticated){
         req.currentUser = user;
+      } else {
+        message = 'Authentication failed';
       }
+    } else {
+      message = 'User not found';
     }
+   } else {
+    message = 'Auth header not found';
   }
-  next();
+  if(message) {
+    console.warn(message);
+    res.status(401).json({ message: 'Access denied' });
+  } else {
+    next();
+  }
 }
 
 // Get all copurses data in the format of json // WORKS!
@@ -66,7 +77,7 @@ router.get('/courses/:id', asyncHandler( async(req, res) => {
 
 // Create Courses // PROBLEMSSS
 
-router.post('/courses',[validateTitle, validateDescription], asyncHandler(async(req, res) => {
+router.post('/courses',[validateTitle, validateDescription], authenticateUser, asyncHandler(async(req, res) => {
 
   const course = await Course.create(req.body);
   const errors = validationResult(req);
@@ -81,7 +92,7 @@ router.post('/courses',[validateTitle, validateDescription], asyncHandler(async(
 
 // Update Courses  // WORKS!
 
-router.put('/courses/:id', asyncHandler( async(req, res) => {
+router.put('/courses/:id', authenticateUser, asyncHandler( async(req, res) => {
   const course = await Course.findByPk(req.params.id);
   res.json(course);
   if(course){
@@ -93,7 +104,7 @@ router.put('/courses/:id', asyncHandler( async(req, res) => {
 
 // Delete Courses // WORKS!
 
-router.delete('/courses/:id', asyncHandler( async(req, res) => {
+router.delete('/courses/:id', authenticateUser, asyncHandler( async(req, res) => {
   const course = await Course.findByPk(req.params.id);
   if(course){
     await course.destroy();

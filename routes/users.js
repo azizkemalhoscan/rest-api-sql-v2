@@ -44,6 +44,35 @@ function asyncHandler(cb){
   }
 }
 
+// Authentication middleware
+// YOU NEDD TO MAKE SOME CHANGES HERE.
+
+const authenticateUser = (req, res, next) => {
+  const credentials = auth(req);
+  if(credentials){
+    const user = users.find(u => u.username === credentials.name);
+    if(user){
+      const authenticated = bcryptjs
+      .compareSync( credentials.pass, user.password);
+      if(authenticated){
+        req.currentUser = user;
+      } else {
+        message = 'Authentication failed';
+      }
+    } else {
+      message = 'User not found';
+    }
+   } else {
+    message = 'Auth header not found';
+  }
+  if(message) {
+    console.warn(message);
+    res.status(401).json({ message: 'Access denied' });
+  } else {
+    next();
+  }
+}
+
 let users;
 /* GET users listing. */
 router.get('/users', asyncHandler(async(req, res) => {
