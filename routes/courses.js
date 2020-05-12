@@ -3,10 +3,12 @@ var router = express.Router();
 const { check, validationResult } = require('express-validator');
 // ES6 SYNTAX
 const Course  = require('../models').Course;
+const User = require('../models').User;
 const auth = require('basic-auth');
-let courses;
+let courses = [];
+let users;
 
-const validateTitle= check("title")
+const validateTitle = check("title")
 .exists({
   checkNull: true,
   checkFalsy: true
@@ -63,20 +65,30 @@ const authenticateUser = (req, res, next) => {
 
 // Get all copurses data in the format of json // WORKS!
 router.get('/courses', asyncHandler(async(req, res) => {
-  const courses = await Course.findAll();
+  const courses = await Course.findAll({
+    include: [{
+      model: User
+    }]
+  });
   res.json(courses);
 }));
 
 // Get a unique course get it from its ID // WORKS!
 
 router.get('/courses/:id', asyncHandler( async(req, res) => {
-  const courses = await Course.findAll();
+  const courses = await Course.findAll({
+    include: [{
+      model: User
+    }]
+  });
   const course = courses.find(course => course.id == req.params.id);
   res.json(course);
 }));
 
 // Create Courses // PROBLEMSSS
 // AUTHENTICATEUSER Will be added later.
+
+
 router.post('/courses',[validateTitle, validateDescription], asyncHandler(async(req, res) => {
 
   const course = await Course.create(req.body);
@@ -88,13 +100,14 @@ router.post('/courses',[validateTitle, validateDescription], asyncHandler(async(
     courses.push(course);
     res.status(201).json(courses).end();
   }
+  console.log(course.id);
+  res.redirect(`/courses/:${course.id}`);
 }));
 
 // Update Courses  // WORKS!
 
-router.put('/courses/:id', authenticateUser, asyncHandler( async(req, res) => {
+router.put('/courses/:id', asyncHandler( async(req, res) => {
   const course = await Course.findByPk(req.params.id);
-  res.json(course);
   if(course){
     await course.update(req.body);
   } else {
@@ -104,7 +117,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler( async(req, res) => {
 
 // Delete Courses // WORKS!
 
-router.delete('/courses/:id', authenticateUser, asyncHandler( async(req, res) => {
+router.delete('/courses/:id', asyncHandler( async(req, res) => {
   const course = await Course.findByPk(req.params.id);
   if(course){
     await course.destroy();

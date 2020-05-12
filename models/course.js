@@ -27,10 +27,10 @@ module.exports = (sequelize) => {
   }, { sequelize });
 
  Course.associate = (models) => {
-  Course.hasMany(models.User, {
+  Course.belongsTo(models.User, {
     foreignKey: {
       fieldName: "userId",
-      // allowNull: false
+      allowNull: false
     },
   });
  };
