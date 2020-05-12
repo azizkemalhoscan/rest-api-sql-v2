@@ -8,6 +8,9 @@ const auth = require('basic-auth');
 let courses = [];
 let users;
 
+/* ------------------------------------------------------------
+ VALIDATIONS */
+
 const validateTitle = check("title")
 .exists({
   checkNull: true,
@@ -33,9 +36,11 @@ function asyncHandler(cb){
     }
   }
 }
+const courseValidations = [validateTitle, validateDescription];
 
-// Authentication middleware
-// YOU NEDD TO MAKE SOME CHANGES HERE.
+// -----------------------------------------------------------------
+/* Authentication middleware
+
 
 const authenticateUser = (req, res, next) => {
   const credentials = auth(req);
@@ -62,8 +67,10 @@ const authenticateUser = (req, res, next) => {
     next();
   }
 }
+----------------------------------------------------------------------*/
 
-// Get all copurses data in the format of json // WORKS!
+/*COURSES LIST*/
+
 router.get('/courses', asyncHandler(async(req, res) => {
   const courses = await Course.findAll({
     include: [{
@@ -74,6 +81,8 @@ router.get('/courses', asyncHandler(async(req, res) => {
 }));
 
 // Get a unique course get it from its ID // WORKS!
+
+/*GET A COURSE FROM LIST*/
 
 router.get('/courses/:id', asyncHandler( async(req, res) => {
   const courses = await Course.findAll({
@@ -88,8 +97,8 @@ router.get('/courses/:id', asyncHandler( async(req, res) => {
 // Create Courses // PROBLEMSSS
 // AUTHENTICATEUSER Will be added later.
 
-
-router.post('/courses',[validateTitle, validateDescription], asyncHandler(async(req, res) => {
+/**/
+router.post('/courses', courseValidations, asyncHandler(async(req, res) => {
 
   const course = await Course.create(req.body);
   const errors = validationResult(req);
@@ -106,7 +115,7 @@ router.post('/courses',[validateTitle, validateDescription], asyncHandler(async(
 
 // Update Courses  // WORKS!
 
-router.put('/courses/:id', asyncHandler( async(req, res) => {
+router.put('/courses/:id', courseValidations, asyncHandler( async(req, res) => {
   const course = await Course.findByPk(req.params.id);
   if(course){
     await course.update(req.body);

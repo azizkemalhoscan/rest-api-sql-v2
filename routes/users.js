@@ -35,6 +35,8 @@ const validatePassword =  check('password')
 })
 .withMessage('Please provide a value for "Password"');
 
+const allValidations = [validateFirstName, validateLastName, validateEmailAddress, validatePassword];
+
 function asyncHandler(cb){
   return async(req, res, next) => {
     try {
@@ -92,8 +94,10 @@ router.get('/users/:id', asyncHandler(async(req, res) => {
 /* POST /api/users 201 - Creates a user, sets the Location header
 to "/", and returns no content  res.redirect may be the wrong soluttion*/
 
-router.post('/users', [validateFirstName, validateLastName, validateEmailAddress, validatePassword], asyncHandler(async(req, res) => {
-  const user = await User.create(req.body);
+//
+
+router.post('/users', allValidations, asyncHandler(async(req, res) => {
+  const user = req.body;
   const errors = validationResult(req);
   if(!errors.isEmpty()){
     const errormessages = errors.array().map(error => error.msg);
