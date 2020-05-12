@@ -7,6 +7,8 @@ const bcryptjs = require('bcryptjs');
 const { check, validationResult } = require('express-validator');
 // Handler function to wrap each route
 
+/* ------------------------------------------------------------
+ VALIDATIONS */
 const validateFirstName = check("firstName")
 .exists({
   checkNull: true,
@@ -37,6 +39,9 @@ const validatePassword =  check('password')
 
 const allValidations = [validateFirstName, validateLastName, validateEmailAddress, validatePassword];
 
+// ----------------------------------------------------------------
+// Handler function to wrap each route
+
 function asyncHandler(cb){
   return async(req, res, next) => {
     try {
@@ -51,40 +56,39 @@ function asyncHandler(cb){
 // YOU NEDD TO MAKE SOME CHANGES HERE.
 // --------------------------------------------------------------
 
-// let authUsers = [];
 
-// const authenticateUser = (req, res, next) => {
-//   const credentials = auth(req);
-//   const authUsers = User.findAll();
-//   if(credentials){
-//     const authUser = authUsers.find(u => u.username === credentials.name);
-//     if(user){
-//       const authenticated = bcryptjs
-//       .compareSync( credentials.pass, authUser.password);
-//       if(authenticated){
-//         req.currentUser = authUser;
-//       } else {
-//         message = 'Authentication failed';
-//       }
-//     } else {
-//       message = 'User not found';
-//     }
-//    } else {
-//     message = 'Auth header not found';
-//   }
-//   if(message) {
-//     console.warn(message);
-//     res.status(401).json({ message: 'Access denied' });
-//   } else {
-//     next();
-//   }
-// }
+const authenticateUser = (req, res, next) => {
+  let message = null;
+  const credentials = auth(req);
+  if(credentials){
+    const user = users.find(u => u.username === credentials.name);
+    if(user){
+      const authenticated = bcryptjs
+      .compareSync( credentials.pass, user.password);
+      if(authenticated){
+        req.currentUser = user;
+      } else {
+        message = 'Authentication failed';
+      }
+    } else {
+      message = 'User not found';
+    }
+   } else {
+    message = 'Auth header not found';
+  }
+  if(message) {
+    console.warn(message);
+    res.status(401).json({ message: 'Access denied' });
+  } else {
+    next();
+  }
+};
 
 // -------------------------------------------------------------
 
 let users = [];
 /* GET users listing. */
-router.get('/users/:id', asyncHandler(async(req, res) => {
+router.get('/users/:id', authenticateUser, asyncHandler(async(req, res) => {
   users = await User.findAll();
   // users.push(allUsers);
   const user = users.find(user => user.id == req.params.id)
@@ -105,7 +109,7 @@ router.post('/users', allValidations, asyncHandler(async(req, res) => {
   } else {
     user.password = bcryptjs.hashSync(user.password);
     users.push(user);
-    res.status(201).json(users).end();
+    res.status(201).end();
   }
   res.redirect('/');
 }));

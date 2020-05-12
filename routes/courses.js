@@ -6,8 +6,7 @@ const Course  = require('../models').Course;
 const User = require('../models').User;
 const auth = require('basic-auth');
 let courses = [];
-let users;
-
+let users = [];
 /* ------------------------------------------------------------
  VALIDATIONS */
 
@@ -25,6 +24,8 @@ const validateDescription = check("description")
 })
 .withMessage('Please provide a vaue for "Description"');
 
+const courseValidations = [validateTitle, validateDescription];
+// --------------------------------------------------------------
 // Handler function to wrap each route
 
 function asyncHandler(cb){
@@ -36,13 +37,12 @@ function asyncHandler(cb){
     }
   }
 }
-const courseValidations = [validateTitle, validateDescription];
-
 // -----------------------------------------------------------------
-/* Authentication middleware
+ // Authentication middleware
 
 
 const authenticateUser = (req, res, next) => {
+  let message = null;
   const credentials = auth(req);
   if(credentials){
     const user = users.find(u => u.username === credentials.name);
@@ -66,8 +66,8 @@ const authenticateUser = (req, res, next) => {
   } else {
     next();
   }
-}
-----------------------------------------------------------------------*/
+};
+// ----------------------------------------------------------------------
 
 /*COURSES LIST*/
 
@@ -98,7 +98,7 @@ router.get('/courses/:id', asyncHandler( async(req, res) => {
 // AUTHENTICATEUSER Will be added later.
 
 /**/
-router.post('/courses', courseValidations, asyncHandler(async(req, res) => {
+router.post('/courses', authenticateUser, courseValidations, asyncHandler(async(req, res) => {
 
   const course = await Course.create(req.body);
   const errors = validationResult(req);
@@ -115,7 +115,7 @@ router.post('/courses', courseValidations, asyncHandler(async(req, res) => {
 
 // Update Courses  // WORKS!
 
-router.put('/courses/:id', courseValidations, asyncHandler( async(req, res) => {
+router.put('/courses/:id', authenticateUser, courseValidations, asyncHandler( async(req, res) => {
   const course = await Course.findByPk(req.params.id);
   if(course){
     await course.update(req.body);
@@ -126,7 +126,7 @@ router.put('/courses/:id', courseValidations, asyncHandler( async(req, res) => {
 
 // Delete Courses // WORKS!
 
-router.delete('/courses/:id', asyncHandler( async(req, res) => {
+router.delete('/courses/:id', authenticateUser, asyncHandler( async(req, res) => {
   const course = await Course.findByPk(req.params.id);
   if(course){
     await course.destroy();
