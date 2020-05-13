@@ -6,7 +6,7 @@ const auth = require('basic-auth');
 const bcryptjs = require('bcryptjs');
 const { check, validationResult } = require('express-validator');
 // Handler function to wrap each route
-
+const denememsi =  require('./courses').Deneme
 /* ------------------------------------------------------------
  VALIDATIONS */
 const validateFirstName = check("firstName")
@@ -56,12 +56,13 @@ function asyncHandler(cb){
 // YOU NEDD TO MAKE SOME CHANGES HERE.
 // --------------------------------------------------------------
 
+console.log(denememsi);
 
 const authenticateUser = (req, res, next) => {
   let message = null;
   const credentials = auth(req);
   if(credentials){
-    const user = users.find(u => u.username === credentials.name);
+    const user = users.find(u => u.emailAddress === credentials.name);
     if(user){
       const authenticated = bcryptjs
       .compareSync( credentials.pass, user.password);
@@ -88,17 +89,17 @@ const authenticateUser = (req, res, next) => {
 
 let users = [];
 /* GET users listing. */
-router.get('/users/:id', authenticateUser, asyncHandler(async(req, res) => {
-  users = await User.findAll();
-  // users.push(allUsers);
-  const user = users.find(user => user.id == req.params.id)
-  res.json(user);
+router.get('/users', authenticateUser, asyncHandler(async(req, res) => {
+  const user = await req.currentUser;
+  console.log(user);
+  res.json(user).end();
+  // users = await User.findAll();
+  // // users.push(allUsers);
+  // const user = users.find(user => user.id == req.params.id)
+  // res.json(user);
 }));
 
-/* POST /api/users 201 - Creates a user, sets the Location header
-to "/", and returns no content  res.redirect may be the wrong soluttion*/
 
-//
 
 router.post('/users', allValidations, asyncHandler(async(req, res) => {
   const user = req.body;

@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
       type: Sequelize.STRING
     },
     description: {
-      type: Sequelize.STRING
+      type: Sequelize.TEXT
     },
     estimatedTime: {
       type: Sequelize.STRING,
@@ -37,25 +37,3 @@ module.exports = (sequelize) => {
 
   return Course;
 }
-
-// Example From starter files
-
-  // Movie.associate = (models) => {
-  //   Movie.belongsTo(models.Person, {
-  //     as: 'director',
-  //     foreignKey: {
-  //       fieldName: 'directorPersonId',
-  //       allowNull: false,
-  //     },
-  //   });
-  //   // TODO Add associations.
-  // };
-
-// Course
-// id (Integer, primary key, auto-generated)
-// userId (id from the Users table)
-// title (String)
-// description (Text)
-// estimatedTime (String, nullable)
-// materialsNeeded (String, nullable)
-// When defining models for an existing database..
