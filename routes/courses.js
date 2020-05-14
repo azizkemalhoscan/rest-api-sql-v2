@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const { check, validationResult } = require('express-validator');
 // ES6 SYNTAX
-const Course  = require('../models').Course;
+const Course = require('../models').Course;
 const User = require('../models').User;
 const bcryptjs = require('bcryptjs');
 const auth = require('basic-auth');
@@ -43,11 +43,13 @@ function asyncHandler(cb){
  // Authentication middleware
 
 
-const authenticateUser = (req, res, next) => {
+const authenticateUser = async(req, res, next) => {
   let message = null;
   const credentials = auth(req);
   if(credentials){
-    const user = users.find(u => u.emailAddress === credentials.name);
+    const users = await User.findAll();
+    const user = await users.find(u => u.emailAddress === credentials.name);
+    console.log(user);
     if(user){
       const authenticated = bcryptjs
       .compareSync( credentials.pass, user.password);
@@ -117,8 +119,8 @@ router.get('/courses/:id', asyncHandler( async(req, res) => {
 // AUTHENTICATEUSER Will be added later.
 
 /**/
-router.post('/courses', authenticateUser, courseValidations, asyncHandler(async(req, res) => {
-  const user = req.currentUser;
+router.post('/courses', courseValidations, authenticateUser, asyncHandler(async(req, res) => {
+  // const user = req.currentUser;
   const course = await Course.create(req.body);
   const errors = validationResult(req);
   if(!errors.isEmpty()){

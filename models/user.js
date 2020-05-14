@@ -3,7 +3,7 @@
 const Sequelize = require('sequelize');
 
 module.exports = (sequelize) => {
-  class User extends Sequelize.Model {}
+  class User extends Sequelize.Model{}
   User.init({
     // id: {
     //   type: Sequelize.INTEGER,
@@ -21,7 +21,7 @@ module.exports = (sequelize) => {
     },
     password: {
       type: Sequelize.STRING
-    }
+    },
   }, { sequelize });
 
  User.associate = (models) => {
@@ -32,6 +32,7 @@ module.exports = (sequelize) => {
     },
   });
  };
+
   return User;
 }
 

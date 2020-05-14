@@ -6,7 +6,7 @@ const auth = require('basic-auth');
 const bcryptjs = require('bcryptjs');
 const { check, validationResult } = require('express-validator');
 // Handler function to wrap each route
-const denememsi =  require('./courses').Deneme
+let users = [];
 /* ------------------------------------------------------------
  VALIDATIONS */
 const validateFirstName = check("firstName")
@@ -56,13 +56,13 @@ function asyncHandler(cb){
 // YOU NEDD TO MAKE SOME CHANGES HERE.
 // --------------------------------------------------------------
 
-console.log(denememsi);
-
-const authenticateUser = (req, res, next) => {
+const authenticateUser = async(req, res, next) => {
   let message = null;
   const credentials = auth(req);
+  console.log(credentials);
   if(credentials){
-    const user = users.find(u => u.emailAddress === credentials.name);
+    const users = await User.findAll();
+    const user = await users.find(u => u.emailAddress === credentials.name);
     if(user){
       const authenticated = bcryptjs
       .compareSync( credentials.pass, user.password);
@@ -87,10 +87,10 @@ const authenticateUser = (req, res, next) => {
 
 // -------------------------------------------------------------
 
-let users = [];
+
 /* GET users listing. */
-router.get('/users', authenticateUser, asyncHandler(async(req, res) => {
-  const user = await req.currentUser;
+router.get('/users', authenticateUser, asyncHandler((req, res) => {
+  const user = req.currentUser;
   console.log(user);
   res.json(user).end();
   // users = await User.findAll();
@@ -102,15 +102,15 @@ router.get('/users', authenticateUser, asyncHandler(async(req, res) => {
 
 
 router.post('/users', allValidations, asyncHandler(async(req, res) => {
-  const user = req.body;
   const errors = validationResult(req);
   if(!errors.isEmpty()){
     const errormessages = errors.array().map(error => error.msg);
-    res.status(400).json({ errors: errormessages });
+    res.status(400).json({ errors: errormessages })
   } else {
-    user.password = bcryptjs.hashSync(user.password);
+    req.body.password = await bcryptjs.hashSync(req.body.password);
+    const user = await User.create(req.body);
     users.push(user);
-    res.status(201).end();
+    res.status(201).json(users).end();
   }
   res.redirect('/');
 }));
