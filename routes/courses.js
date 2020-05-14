@@ -75,21 +75,6 @@ const authenticateUser = async(req, res, next) => {
 
 
 
-// router.post('/users',  asyncHandler(async(req, res) => {
-//   const user = req.body;
-//   const errors = validationResult(req);
-//   if(!errors.isEmpty()){
-//     const errormessages = errors.array().map(error => error.msg);
-//     res.status(400).json({ errors: errormessages });
-//   } else {
-//     user.password = bcryptjs.hashSync(user.password);
-//     users.push(user);
-//     res.status(201).end();
-//   }
-//   res.redirect('/');
-// }));
-
-
 /*COURSES LIST*/
 
 router.get('/courses', asyncHandler(async(req, res) => {
@@ -101,7 +86,6 @@ router.get('/courses', asyncHandler(async(req, res) => {
   res.json(courses);
 }));
 
-// Get a unique course get it from its ID // WORKS!
 
 /*GET A COURSE FROM LIST*/
 
@@ -115,8 +99,7 @@ router.get('/courses/:id', asyncHandler( async(req, res) => {
   res.json(course);
 }));
 
-// Create Courses // PROBLEMSSS
-// AUTHENTICATEUSER Will be added later.
+// Create Courses
 
 /**/
 router.post('/courses', courseValidations, authenticateUser, asyncHandler(async(req, res) => {
