@@ -49,7 +49,6 @@ const authenticateUser = async(req, res, next) => {
   if(credentials){
     const users = await User.findAll();
     const user = await users.find(u => u.emailAddress === credentials.name);
-    console.log(user);
     if(user){
       const authenticated = bcryptjs
       .compareSync( credentials.pass, user.password);
@@ -111,10 +110,10 @@ router.post('/courses', courseValidations, authenticateUser, asyncHandler(async(
     res.status(400).json({ errors: errormessages })
   } else {
     courses.push(course);
-    res.status(201).json(courses).end();
+    res.status(201).location(`/courses/:${course.id}`).end();
   }
-  console.log(course.id);
-  res.redirect(`/courses/:${course.id}`);
+  // console.log(course.id);
+  // res.redirect(`/courses/:${course.id}`);
 }));
 
 // Update Courses  // WORKS!
@@ -122,9 +121,17 @@ router.post('/courses', courseValidations, authenticateUser, asyncHandler(async(
 router.put('/courses/:id', authenticateUser, courseValidations, asyncHandler( async(req, res) => {
   const course = await Course.findByPk(req.params.id);
   if(course){
-    await course.update(req.body);
+    console.log(course);
+    await course.update({
+      title: req.body.title,
+      description: req.body.description,
+      estimatedTime: req.body.estimatedTime,
+      materialsNeeded: req.body.materialsNeeded,
+      userId: req.body.userId,
+    });
+    res.sendStatus(204).end();
   } else {
-    res.sendStatus(404);
+    res.sendStatus(404).end();
   }
 }));
 
@@ -134,7 +141,7 @@ router.delete('/courses/:id', authenticateUser, asyncHandler( async(req, res) =>
   const course = await Course.findByPk(req.params.id);
   if(course){
     await course.destroy();
-    res.sendStatus(200);
+    res.sendStatus(204);
   } else {
     throw error;
   }

@@ -92,7 +92,7 @@ const authenticateUser = async(req, res, next) => {
 router.get('/users', authenticateUser, asyncHandler((req, res) => {
   const user = req.currentUser;
   console.log(user);
-  res.json(user).end();
+  res.status(200).json(user).end();
   // users = await User.findAll();
   // // users.push(allUsers);
   // const user = users.find(user => user.id == req.params.id)
@@ -110,9 +110,9 @@ router.post('/users', allValidations, asyncHandler(async(req, res) => {
     req.body.password = await bcryptjs.hashSync(req.body.password);
     const user = await User.create(req.body);
     users.push(user);
-    res.status(201).json(users).end();
+    res.status(201).location('/').end();
   }
-  res.redirect('/');
+  // res.redirect('/');
 }));
 
 
